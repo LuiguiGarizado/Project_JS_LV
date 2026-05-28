@@ -35,8 +35,25 @@ export const ApiService = {
         return response.ok;
     },
 
+    async createUser(userData) {
+        const response = await fetch(`${BASE_URL}/users`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(userData)
+        });
+        return response.ok;
+    },
+
     async deleteTask(id) {
         const response = await fetch(`${BASE_URL}/tasks/${id}`, {
+            method: "DELETE",
+            headers: { "Content-Type": "application/json" }
+        });
+        return response.ok;
+    },
+
+    async deleteUser(id) {
+        const response = await fetch(`${BASE_URL}/users/${id}`, {
             method: "DELETE",
             headers: { "Content-Type": "application/json" }
         });

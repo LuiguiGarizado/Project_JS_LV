@@ -276,6 +276,19 @@
         </div>
       </div>
     </main>
+    <script>
+      const storedSession = localStorage.getItem("riwiflow_session");
+      if (storedSession) {
+        try {
+          const user = JSON.parse(storedSession);
+          if (user && user.id) {
+            window.location.href = "index.html";
+          }
+        } catch (error) {
+          localStorage.removeItem("riwiflow_session");
+        }
+      }
+    </script>
     <!-- Visual Background Element (Atmospheric) -->
     <div class="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
       <div

@@ -91,6 +91,7 @@ export const DashboardView = {
                   <h2 class="font-title-sm text-title-sm text-on-surface">Team</h2>
                   <p class="text-body-sm text-on-surface-variant">Personas registradas en la plataforma</p>
                 </div>
+                ${AppSPA.getUserSession().role === "admin" ? `<button id="btn-add-user" class="bg-primary text-on-primary px-4 py-2 rounded-xl font-label-md text-label-md hover:opacity-90 transition-opacity">Add person</button>` : ""}
               </div>
               <div id="team-users" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-gutter"></div>
             </div>
@@ -114,6 +115,7 @@ export const DashboardView = {
 
         const dashboardLink = document.getElementById("nav-dashboard");
         const teamLink = document.getElementById("nav-team");
+        const addUserBtn = document.getElementById("btn-add-user");
 
         dashboardLink?.addEventListener("click", (e) => {
             e.preventDefault();
@@ -124,6 +126,8 @@ export const DashboardView = {
             e.preventDefault();
             this.showTeam();
         });
+
+        addUserBtn?.addEventListener("click", () => this.openCreateUserModal());
 
         await this.loadBoardData();
         this.showDashboard();
@@ -187,6 +191,13 @@ export const DashboardView = {
         const teamList = document.getElementById("team-users");
         if (!teamList) return;
 
+        const sessionUser = AppSPA.getUserSession();
+
+        if (!users.length) {
+            teamList.innerHTML = `<p class="text-on-surface-variant">No hay usuarios registrados aún.</p>`;
+            return;
+        }
+
         teamList.innerHTML = users.map(user => `
             <article class="bg-surface border border-outline-variant rounded-xl p-md shadow-sm">
               <div class="flex items-center gap-4">
@@ -196,12 +207,36 @@ export const DashboardView = {
                   <p class="text-[13px] text-on-surface-variant">${user.email}</p>
                 </div>
               </div>
-              <div class="mt-4 flex items-center justify-between">
+              <div class="mt-4 flex items-center justify-between gap-4">
                 <span class="rounded-full px-3 py-1 bg-surface-container-high text-on-surface-variant text-[12px] uppercase">${user.role}</span>
-                <span class="text-[12px] text-on-surface-variant">ID ${user.id}</span>
+                <div class="flex items-center gap-2">
+                  <span class="text-[12px] text-on-surface-variant">ID ${user.id}</span>
+                  ${sessionUser.role === "admin" ? `<button type="button" data-user-id="${user.id}" class="team-delete-user rounded-full bg-error/10 text-error px-3 py-1 text-[12px] hover:bg-error/20 transition-all">Eliminar</button>` : ""}
+                </div>
               </div>
             </article>
         `).join("");
+
+        if (sessionUser.role === "admin") {
+            document.querySelectorAll(".team-delete-user").forEach(button => {
+                button.addEventListener("click", async (event) => {
+                    const userId = event.currentTarget.dataset.userId;
+                    if (userId === sessionUser.id) {
+                        alert("No puedes eliminar tu propia cuenta mientras estás conectado.");
+                        return;
+                    }
+
+                    if (!confirm("¿Eliminar a esta persona de la plataforma?")) return;
+
+                    if (await ApiService.deleteUser(userId)) {
+                        await this.loadBoardData();
+                        this.showTeam();
+                    } else {
+                        alert("No se pudo eliminar el usuario. Intenta de nuevo más tarde.");
+                    }
+                });
+            });
+        }
     },
 
     showDashboard() {
@@ -404,6 +439,51 @@ export const DashboardView = {
                     await this.loadBoardData();
                 }
             });
+        });
+    },
+
+    openCreateUserModal() {
+        const wrapper = document.getElementById("modal-wrapper");
+        wrapper.innerHTML = `
+          <div class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-md">
+            <div class="bg-surface-container-lowest border border-outline-variant p-xl rounded-xl w-full max-w-[440px] space-y-md">
+              <h3 class="text-title-sm font-bold text-primary">Add Team Member</h3>
+              <form id="create-user-form" class="space-y-md">
+                <input type="text" id="u-name" class="w-full border p-2 rounded" placeholder="Name" required />
+                <input type="email" id="u-email" class="w-full border p-2 rounded" placeholder="Email" required />
+                <input type="password" id="u-password" class="w-full border p-2 rounded" placeholder="Password" required />
+                <select id="u-role" class="w-full border p-2 rounded" required>
+                  <option value="coder">Coder</option>
+                  <option value="admin">Admin</option>
+                </select>
+
+                <div class="flex gap-2">
+                  <button type="button" id="u-close" class="w-1/2 border p-2 rounded">Cancel</button>
+                  <button type="submit" class="w-1/2 bg-primary text-on-primary p-2 rounded">Create</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        `;
+
+        document.getElementById("u-close").addEventListener("click", () => wrapper.innerHTML = "");
+        document.getElementById("create-user-form").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const payload = {
+                name: document.getElementById("u-name").value.trim(),
+                email: document.getElementById("u-email").value.trim(),
+                password: document.getElementById("u-password").value,
+                role: document.getElementById("u-role").value,
+                id: Date.now().toString()
+            };
+
+            if (await ApiService.createUser(payload)) {
+                wrapper.innerHTML = "";
+                await this.loadBoardData();
+                this.showTeam();
+            } else {
+                alert("No se pudo crear el usuario. Revisa los datos e intenta de nuevo.");
+            }
         });
     }
 };

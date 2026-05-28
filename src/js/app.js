@@ -27,7 +27,15 @@ export const AppSPA = {
     },
 
     getUserSession() {
-        return JSON.parse(localStorage.getItem("riwiflow_session"));
+        const storage = localStorage.getItem("riwiflow_session");
+        if (!storage) return null;
+
+        try {
+            return JSON.parse(storage);
+        } catch (error) {
+            localStorage.removeItem("riwiflow_session");
+            return null;
+        }
     },
 
     clearSession() {

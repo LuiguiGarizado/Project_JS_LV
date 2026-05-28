@@ -13,29 +13,43 @@
       "email": "coder@company.com",
       "password": "coder123",
       "role": "coder"
+    },
+    {
+      "name": "victoria",
+      "email": "vicoder@company.com",
+      "password": "victoria123",
+      "role": "coder",
+      "id": "jHxisKpOWWo"
     }
   ],
   "tasks": [
     {
       "title": "hugyu",
       "description": "jkhgyctfui",
-      "status": "in review",
+      "status": "todo",
       "userId": "1",
       "id": "yccu71YHK3E"
     },
     {
       "title": "jkjhbygnm,.lñ",
       "description": "sAzdgfvnhjkm,l",
-      "status": "in review",
+      "status": "in progress",
       "userId": "1",
       "id": "n6ch2A4hikc"
     },
     {
       "title": "aaaaaaaaaaaaa",
       "description": "dsjiusdoiksñld",
-      "status": "done",
+      "status": "todo",
       "userId": "2",
       "id": "6eQovdccISA"
+    },
+    {
+      "title": "oooooooooo",
+      "description": "koamkasmckomsw",
+      "status": "in progress",
+      "userId": null,
+      "id": "3HWHW_vlWWw"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"
