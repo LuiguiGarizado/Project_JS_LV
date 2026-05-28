@@ -20,36 +20,29 @@
       "password": "victoria123",
       "role": "coder",
       "id": "jHxisKpOWWo"
+    },
+    {
+      "name": "Sayder",
+      "email": "sacoder@company.com",
+      "password": "sayder123",
+      "role": "coder",
+      "id": "JPsdiF7xh-Y"
+    },
+    {
+      "name": "gabriela",
+      "email": "gabrielacoder@company.com",
+      "password": "gaby1234",
+      "role": "coder",
+      "id": "w09YrBnorUc"
     }
   ],
   "tasks": [
     {
-      "title": "hugyu",
-      "description": "jkhgyctfui",
-      "status": "todo",
-      "userId": "1",
-      "id": "yccu71YHK3E"
-    },
-    {
-      "title": "jkjhbygnm,.lñ",
-      "description": "sAzdgfvnhjkm,l",
-      "status": "in progress",
-      "userId": "1",
-      "id": "n6ch2A4hikc"
-    },
-    {
-      "title": "aaaaaaaaaaaaa",
-      "description": "dsjiusdoiksñld",
+      "title": "Building fronted ",
+      "description": "Search bar button is not working properly, user says that when click on that the main page goes glitched.",
       "status": "todo",
       "userId": "2",
-      "id": "6eQovdccISA"
-    },
-    {
-      "title": "oooooooooo",
-      "description": "koamkasmckomsw",
-      "status": "in progress",
-      "userId": null,
-      "id": "3HWHW_vlWWw"
+      "id": "wl8ktgYEqQo"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"

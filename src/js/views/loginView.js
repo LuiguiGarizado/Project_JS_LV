@@ -81,7 +81,7 @@ export const LoginView = {
                     role: user.role
                 });
             } else {
-                alert("Incorrect credentials.");
+                AppSPA.showNotification("Incorrect credentials.", "error");
             }
         });
     }

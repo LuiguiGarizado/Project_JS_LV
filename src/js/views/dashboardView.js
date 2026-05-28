@@ -89,7 +89,7 @@ export const DashboardView = {
               <div class="flex items-center justify-between mb-md">
                 <div>
                   <h2 class="font-title-sm text-title-sm text-on-surface">Team</h2>
-                  <p class="text-body-sm text-on-surface-variant">Personas registradas en la plataforma</p>
+                  <p class="text-body-sm text-on-surface-variant">Team members registered on the platform</p>
                 </div>
                 ${AppSPA.getUserSession().role === "admin" ? `<button id="btn-add-user" class="bg-primary text-on-primary px-4 py-2 rounded-xl font-label-md text-label-md hover:opacity-90 transition-opacity">Add person</button>` : ""}
               </div>
@@ -194,7 +194,7 @@ export const DashboardView = {
         const sessionUser = AppSPA.getUserSession();
 
         if (!users.length) {
-            teamList.innerHTML = `<p class="text-on-surface-variant">No hay usuarios registrados aún.</p>`;
+            teamList.innerHTML = `<p class="text-on-surface-variant">No users registered yet.</p>`;
             return;
         }
 
@@ -211,29 +211,42 @@ export const DashboardView = {
                 <span class="rounded-full px-3 py-1 bg-surface-container-high text-on-surface-variant text-[12px] uppercase">${user.role}</span>
                 <div class="flex items-center gap-2">
                   <span class="text-[12px] text-on-surface-variant">ID ${user.id}</span>
-                  ${sessionUser.role === "admin" ? `<button type="button" data-user-id="${user.id}" class="team-delete-user rounded-full bg-error/10 text-error px-3 py-1 text-[12px] hover:bg-error/20 transition-all">Eliminar</button>` : ""}
+                  ${sessionUser.role === "admin" ? `
+                    <button type="button" data-user-id="${user.id}" class="team-edit-user rounded-full bg-primary/10 text-primary px-3 py-1 text-[12px] hover:bg-primary/20 transition-all">Edit</button>
+                    <button type="button" data-user-id="${user.id}" class="team-delete-user rounded-full bg-error/10 text-error px-3 py-1 text-[12px] hover:bg-error/20 transition-all">Delete</button>
+                  ` : ""}
                 </div>
               </div>
             </article>
         `).join("");
 
         if (sessionUser.role === "admin") {
+            document.querySelectorAll(".team-edit-user").forEach(button => {
+                button.addEventListener("click", async (event) => {
+                    const userId = event.currentTarget.dataset.userId;
+                    const user = users.find(u => u.id === userId);
+                    if (user) {
+                        this.openEditUserModal(user);
+                    }
+                });
+            });
+
             document.querySelectorAll(".team-delete-user").forEach(button => {
                 button.addEventListener("click", async (event) => {
                     const userId = event.currentTarget.dataset.userId;
                     if (userId === sessionUser.id) {
-                        alert("No puedes eliminar tu propia cuenta mientras estás conectado.");
+                        AppSPA.showNotification("You cannot delete your own account while logged in.", "error");
                         return;
                     }
 
-                    if (!confirm("¿Eliminar a esta persona de la plataforma?")) return;
-
-                    if (await ApiService.deleteUser(userId)) {
-                        await this.loadBoardData();
-                        this.showTeam();
-                    } else {
-                        alert("No se pudo eliminar el usuario. Intenta de nuevo más tarde.");
-                    }
+                    AppSPA.showConfirm("Delete this person from the platform?", async () => {
+                        if (await ApiService.deleteUser(userId)) {
+                            await this.loadBoardData();
+                            this.showTeam();
+                        } else {
+                            AppSPA.showNotification("Could not delete the user. Try again later.", "error");
+                        }
+                    });
                 });
             });
         }
@@ -291,9 +304,9 @@ export const DashboardView = {
                 const taskUserId = e.dataTransfer.getData("taskUserId");
                 const newStatus = colStatusMap[col.id];
 
-                // AJUSTE SEGURIDAD: Si es coder, sólo puede mover sus propias tareas
+                // SECURITY: If coder, can only move their own tasks
                 if (user.role === "coder" && String(taskUserId) !== String(user.id)) {
-                    alert("No tienes permisos para mover las tareas de otros coders.");
+                    AppSPA.showNotification("You don't have permission to move other coders' tasks.", "error");
                     return;
                 }
 
@@ -326,7 +339,7 @@ export const DashboardView = {
             if (String(task.userId) === String(user.id)) {
                 this.openEditModal(task, users, true, true);
             } else {
-                alert("No tienes permisos para modificar las tareas de otros coders.");
+                AppSPA.showNotification("You don't have permission to modify other coders' tasks.", "error");
             }
         }
     },
@@ -368,18 +381,18 @@ export const DashboardView = {
 
         document.getElementById("m-close").addEventListener("click", () => wrapper.innerHTML = "");
 
-        // Agregar listener al botón de eliminar solo si existe (solo para admin)
+        // Add listener to delete button only if it exists (admin only)
         const deleteBtn = document.getElementById("m-delete");
         if (deleteBtn) {
             deleteBtn.addEventListener("click", async () => {
-                if (confirm("¿Estás seguro de que deseas eliminar esta tarea? Esta acción no se puede deshacer.")) {
+                AppSPA.showConfirm("Are you sure you want to delete this task? This action cannot be undone.", async () => {
                     if (await ApiService.deleteTask(task.id)) {
                         wrapper.innerHTML = "";
                         await this.loadBoardData();
                     } else {
-                        alert("Error al eliminar la tarea");
+                        AppSPA.showNotification("Error deleting the task", "error");
                     }
-                }
+                });
             });
         }
 
@@ -387,7 +400,7 @@ export const DashboardView = {
             e.preventDefault();
             const user = AppSPA.getUserSession();
             
-            // Si el input está deshabilitado, tomamos el valor original para evitar que mande vacíos o alterados
+            // If disabled input, take original value to avoid sending empty or altered data
             const payload = { 
                 title: document.getElementById("m-title").value,
                 description: document.getElementById("m-desc").value,
@@ -481,8 +494,71 @@ export const DashboardView = {
                 wrapper.innerHTML = "";
                 await this.loadBoardData();
                 this.showTeam();
+                AppSPA.showNotification("User created successfully.");
             } else {
-                alert("No se pudo crear el usuario. Revisa los datos e intenta de nuevo.");
+                AppSPA.showNotification("Could not create the user. Check the data and try again.", "error");
+            }
+        });
+    },
+
+    openEditUserModal(user) {
+        const wrapper = document.getElementById("modal-wrapper");
+        wrapper.innerHTML = `
+          <div class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-md">
+            <div class="bg-surface-container-lowest border border-outline-variant p-xl rounded-xl w-full max-w-[440px] space-y-md">
+              <h3 class="text-title-sm font-bold text-primary">Edit Team Member</h3>
+              <form id="edit-user-form" class="space-y-md">
+                <div>
+                  <label class="font-label-sm text-label-sm text-on-surface-variant block mb-xs">Name</label>
+                  <input type="text" id="eu-name" class="w-full border border-outline-variant p-2 rounded" value="${user.name}" required />
+                </div>
+                <div>
+                  <label class="font-label-sm text-label-sm text-on-surface-variant block mb-xs">Email</label>
+                  <input type="email" id="eu-email" class="w-full border border-outline-variant p-2 rounded" value="${user.email}" required />
+                </div>
+                <div>
+                  <label class="font-label-sm text-label-sm text-on-surface-variant block mb-xs">Password (leave empty to keep unchanged)</label>
+                  <input type="password" id="eu-password" class="w-full border border-outline-variant p-2 rounded" placeholder="New password" />
+                </div>
+                <div>
+                  <label class="font-label-sm text-label-sm text-on-surface-variant block mb-xs">Role</label>
+                  <select id="eu-role" class="w-full border border-outline-variant p-2 rounded" required>
+                    <option value="coder" ${user.role === "coder" ? "selected" : ""}>Coder</option>
+                    <option value="admin" ${user.role === "admin" ? "selected" : ""}>Admin</option>
+                  </select>
+                </div>
+
+                <div class="flex gap-2">
+                  <button type="button" id="eu-close" class="w-1/2 border border-outline-variant p-2 rounded">Cancel</button>
+                  <button type="submit" class="w-1/2 bg-primary text-on-primary p-2 rounded">Save Changes</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        `;
+
+        document.getElementById("eu-close").addEventListener("click", () => wrapper.innerHTML = "");
+        document.getElementById("edit-user-form").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const payload = {
+                name: document.getElementById("eu-name").value.trim(),
+                email: document.getElementById("eu-email").value.trim(),
+                role: document.getElementById("eu-role").value
+            };
+
+            // Only add password if something was written in the field
+            const newPassword = document.getElementById("eu-password").value;
+            if (newPassword) {
+                payload.password = newPassword;
+            }
+
+            if (await ApiService.updateUser(user.id, payload)) {
+                wrapper.innerHTML = "";
+                await this.loadBoardData();
+                this.showTeam();
+                AppSPA.showNotification("User updated successfully.");
+            } else {
+                AppSPA.showNotification("Could not update the user. Try again.", "error");
             }
         });
     }

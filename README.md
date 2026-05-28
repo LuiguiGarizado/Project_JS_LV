@@ -1,236 +1,303 @@
-# Historia de Usuario - Proyecto Kanban de Tareas
+# 🎯 RiwiFlow - Kanban Task Management System
 
-## 📌 Nombre del Proyecto
-
-**RiwiFlow**
+A modern, single-page application (SPA) for managing tasks using a Kanban board with role-based access control. Built with vanilla JavaScript and styled with Tailwind CSS.
 
 ---
 
-# 🎯 Objetivo General
+## 📋 Table of Contents
 
-Como usuario del sistema, quiero administrar tareas mediante un tablero Kanban para organizar el flujo de trabajo según su estado y rol dentro de la aplicación.
-
----
-
-# 👥 Roles del Sistema
-
-| Rol   | Descripción                                                              |
-| ----- | ------------------------------------------------------------------------ |
-| Admin | Puede crear, editar y visualizar todas las tareas                        |
-| Coder | Puede visualizar todas las tareas y editar únicamente las asignadas a él |
-
----
-
-# 🧾 Requerimientos Funcionales
-
-## 🔐 Autenticación
-
-### HU-01 — Inicio de sesión
-
-**Como** usuario registrado
-**Quiero** iniciar sesión en la aplicación
-**Para** acceder a las funcionalidades según mi rol.
-
-### Criterios de aceptación
-
-- El usuario debe ingresar:
-  - email
-  - password
-
-- El sistema debe validar las credenciales usando `json-server`.
-- Si las credenciales son correctas:
-  - se debe almacenar la sesión
-  - se debe redireccionar al dashboard principal
-
-- Si las credenciales son incorrectas:
-  - se debe mostrar un mensaje de error
+- [Features](#features)
+- [Project Structure](#project-structure)
+- [Installation](#installation)
+- [Running the Application](#running-the-application)
+- [User Roles & Permissions](#user-roles--permissions)
+- [API Endpoints](#api-endpoints)
+- [Technologies Used](#technologies-used)
+- [Database Schema](#database-schema)
+- [Team Management](#team-management)
 
 ---
 
-## 🖥️ Aplicación SPA
+## ✨ Features
 
-### HU-02 — Navegación sin recarga
+### Authentication & Authorization
+- ✅ User login with email and password
+- ✅ Session management with localStorage
+- ✅ Role-based access control (Admin, Coder)
+- ✅ Secure logout functionality
 
-**Como** usuario
-**Quiero** navegar entre las vistas sin recargar la página
-**Para** tener una mejor experiencia de usuario.
+### Task Management
+- ✅ Create tasks (Admin only)
+- ✅ Edit tasks with full permission control
+- ✅ Delete tasks (Admin only)
+- ✅ Drag-and-drop task status updates
+- ✅ Assign tasks to team members
+- ✅ Task filtering by status (To Do, In Progress, In Review, Done)
 
-### Criterios de aceptación
+### Team Management
+- ✅ Create new team members (Admin only)
+- ✅ Edit user information and passwords
+- ✅ Delete users (Admin only)
+- ✅ Manage user roles dynamically
 
-- El proyecto debe desarrollarse como una SPA (Single Page Application).
-- Debe manejar rutas internas.
-- La navegación no debe recargar completamente el navegador.
-
----
-
-# 📋 Gestión de Tareas
-
-## HU-03 — Crear tareas (Admin)
-
-**Como** administrador
-**Quiero** crear tareas
-**Para** asignarlas a los coders.
-
-### Criterios de aceptación
-
-- Solo usuarios con rol `admin` pueden crear tareas.
-- La tarea debe contener:
-  - título
-  - descripción
-  - estado
-  - usuario asignado
-
-- El estado inicial por defecto debe ser `todo`.
+### User Experience
+- ✅ Single Page Application (SPA) - no page reloads
+- ✅ Responsive design for desktop and tablet
+- ✅ Modal dialogs instead of browser alerts
+- ✅ Material Design icons
+- ✅ Smooth drag-and-drop interactions
+- ✅ Real-time data synchronization
 
 ---
 
-## HU-04 — Visualizar tareas
+## 🗂️ Project Structure
 
-**Como** usuario autenticado
-**Quiero** visualizar todas las tareas
-**Para** conocer el estado del proyecto.
-
-### Criterios de aceptación
-
-- Tanto `admin` como `coder` pueden visualizar todas las tareas.
-- Las tareas deben mostrarse organizadas por columnas:
-  - Todo
-  - In Progress
-  - In Review
-  - Done
-
----
-
-## HU-05 — Editar tareas (Admin)
-
-**Como** administrador
-**Quiero** editar cualquier tarea
-**Para** actualizar información o cambiar estados.
-
-### Criterios de aceptación
-
-- El admin puede:
-  - editar título
-  - editar descripción
-  - cambiar estado
-  - cambiar usuario asignado
+```
+.
+├── index.html                 # Main entry point
+├── login.html                 # Login page
+├── board.html                 # Legacy board file
+├── package.json               # Node dependencies
+├── db.json                    # JSON Server database
+├── README.md                  # This file
+└── src/
+    ├── js/
+    │   ├── app.js            # Main SPA router & notification system
+    │   ├── api.js            # API service for backend calls
+    │   └── views/
+    │       ├── loginView.js   # Login page component
+    │       └── dashboardView.js # Main dashboard with tasks & team
+```
 
 ---
 
-## HU-06 — Editar tareas asignadas (Coder)
+## 🚀 Installation
 
-**Como** coder
-**Quiero** editar únicamente las tareas asignadas a mí
-**Para** actualizar el progreso de mi trabajo.
+### Prerequisites
+- Node.js (v14 or higher)
+- npm or yarn
 
-### Criterios de aceptación
+### Steps
 
-- El coder NO puede crear tareas.
-- El coder solo puede editar tareas donde:
+1. **Clone or download the repository**
+```bash
+cd your-project-folder
+```
 
-- El coder puede:
-  - cambiar estado
-  - editar descripción
+2. **Install dependencies**
+```bash
+npm install
+```
 
-- El coder NO puede:
-  - editar tareas de otros usuarios
-  - eliminar tareas
-  - crear tareas
+3. **Verify json-server is installed**
+```bash
+npm list json-server
+```
 
----
-
-# 🔄 Estados del Kanban
-
-## HU-07 — Flujo de estados
-
-**Como** usuario
-**Quiero** clasificar tareas por estado
-**Para** visualizar el progreso del trabajo.
-
-### Estados requeridos
-
-- `todo`
-- `in progress`
-- `in review`
-- `done`
-
-### Criterios de aceptación
-
-- Cada tarea debe pertenecer a un único estado.
-- Las tareas deben visualizarse en la columna correspondiente.
-- El estado debe poder actualizarse mediante edición.
+If not installed, add it:
+```bash
+npm install json-server --save-dev
+```
 
 ---
 
-# 🗄️ Persistencia de Datos
+## ▶️ Running the Application
 
-## HU-08 — Uso de JSON Server
+### Terminal 1: Start JSON Server (Backend)
+```bash
+npx json-server --watch db.json --port 3000
+```
 
-**Como** desarrollador
-**Quiero** usar `json-server`
-**Para** simular una API REST.
+The API will be available at `http://localhost:3000`
 
-### Criterios de aceptación
+### Terminal 2: Open the Application
+```bash
+# Simply open index.html in your browser
+# Or use a local server (e.g., Live Server in VS Code)
+```
 
-- Debe utilizarse `json-server`.
-- La estructura del archivo `db.json` debe mantenerse exactamente así:
+The application will open at `http://localhost:5500` (or similar)
 
+### Default Login Credentials
+
+| Email | Password | Role |
+|-------|----------|------|
+| admin@company.com | admin123 | Admin |
+| coder@company.com | coder123 | Coder |
+
+---
+
+## 👥 User Roles & Permissions
+
+### Admin Role
+- ✅ Create, read, update, and delete tasks
+- ✅ Assign tasks to any team member
+- ✅ Move all tasks between statuses
+- ✅ Access Team management section
+
+### Coder Role
+- ✅ View all tasks
+- ✅ Edit only assigned tasks
+- ✅ Change status of assigned tasks
+- ✅ Update description of assigned tasks
+- ❌ Create new tasks
+- ❌ Edit or delete other users' tasks
+- ❌ Access Team management section
+
+---
+
+## 🔌 API Endpoints
+
+All endpoints use `json-server` at `http://localhost:3000`
+
+### Users
+```
+GET    /users                    # Get all users
+GET    /users?email=X&password=Y # Login validation
+GET    /users/{id}               # Get single user
+POST   /users                    # Create new user
+PATCH  /users/{id}               # Update user
+DELETE /users/{id}               # Delete user
+```
+
+### Tasks
+```
+GET    /tasks                    # Get all tasks
+GET    /tasks/{id}               # Get single task
+POST   /tasks                    # Create new task
+PATCH  /tasks/{id}               # Update task
+DELETE /tasks/{id}               # Delete task
+```
+
+---
+
+## 🛠️ Technologies Used
+
+- **Frontend Framework:** Vanilla JavaScript (ES6+)
+- **Styling:** Tailwind CSS
+- **Icons:** Material Symbols
+- **Backend:** json-server (for development)
+- **State Management:** LocalStorage for sessions
+- **Architecture:** Single Page Application (SPA)
+
+---
+
+## 💾 Database Schema
+
+### Users Table
 ```json
 {
-  "users": [
-    {
-      "id": 1,
-      "name": "",
-      "email": "",
-      "password": "",
-      "role": "admin"
-    },
-    {
-      "id": 2,
-      "name": "",
-      "email": "",
-      "password": "",
-      "role": "coder"
-    }
-  ],
-  "tasks": [
-    {
-      "id": 1,
-      "title": "",
-      "description": "",
-      "status": "pending",
-      "userId": 2
-    },
-    {
-      "id": 2,
-      "title": "",
-      "description": "",
-      "status": "done",
-      "userId": 2
-    }
-  ]
+  "id": "unique-id",
+  "name": "User Name",
+  "email": "user@company.com",
+  "password": "password123",
+  "role": "admin|coder"
+}
+```
+
+### Tasks Table
+```json
+{
+  "id": "unique-id",
+  "title": "Task Title",
+  "description": "Task Description",
+  "status": "todo|in progress|in review|done",
+  "userId": "assigned-user-id"
 }
 ```
 
 ---
 
-# 🎨 Requerimientos Técnicos
+## 👨‍💼 Team Management (Admin Only)
 
-## Frontend
+### Creating Users
+1. Navigate to **Team** section
+2. Click **"Add person"** button
+3. Fill in the form:
+   - Name
+   - Email
+   - Password
+   - Role (Coder or Admin)
+4. Click **"Create"**
 
-- SPA
-- Manejo de rutas
-- Manejo de estado
-- Consumo de API REST
-- Protección de rutas por autenticación y rol
+### Editing Users
+1. Navigate to **Team** section
+2. Click **"Edit"** button on any user card
+3. Modify the information:
+   - Change name or email
+   - Update password (optional - leave empty to keep current)
+   - Change role
+4. Click **"Save Changes"**
+
+### Deleting Users
+1. Navigate to **Team** section
+2. Click **"Delete"** button on any user card
+3. Confirm the deletion
 
 ---
 
-# ✅ Entregables
+## 🔄 Task Workflow
 
-- Proyecto funcional en ingles
-- Código organizado y en ingles
-- Archivo `db.json`
-- README con instrucciones de ejecución
-- Evidencia del manejo de roles
-- Evidencia del funcionamiento del Kanban
+### Creating a Task (Admin)
+1. Click **"New Task"** button in sidebar
+2. Fill in task details:
+   - Title
+   - Description
+   - Assign to a team member
+3. Click **"Create"** - defaults to "To Do" status
+
+### Moving Tasks (All Users)
+- **Drag and drop** tasks between columns
+- Coders can only move their own tasks
+- Admins can move any task
+
+### Editing Tasks
+1. Click on any task card
+2. Edit available fields:
+   - **Admin:** Can edit all fields and delete
+   - **Coder:** Can only edit description and status of own tasks
+3. Click **"Save"**
+
+### Deleting Tasks (Admin Only)
+1. Click on any task card
+2. Click **"Delete Task"** button
+3. Confirm deletion
+
+---
+
+## 🎨 User Interface Features
+
+### Notifications
+- **Success messages** displayed in green modals
+- **Error messages** displayed in red modals
+- **Confirmations** with Cancel and Confirm buttons
+- All styled with Material Design principles
+
+### Navigation
+- **Dashboard:** Kanban board view with all tasks
+- **Team:** Team member management panel
+- **Responsive menu:** Collapses on smaller screens
+
+### Security
+- Passwords are stored in database (not encrypted in demo)
+- Permission checks on every action
+- Users cannot delete their own account while logged in
+
+---
+
+## 📝 Notes for Development
+
+- All styling uses Tailwind CSS utility classes
+- Drag-and-drop is fully implemented with native HTML5 drag API
+- Modals replace browser alerts for better UX
+- Session persists in localStorage (demo only - not secure for production)
+- Add proper password hashing and encryption for production use
+
+
+## 📄 License
+
+This project is part of an educational assignment. All rights reserved.
+
+## Author
+
+> Luigui Garizado and Victoria Sutachan

@@ -41,6 +41,48 @@ export const AppSPA = {
     clearSession() {
         localStorage.removeItem("riwiflow_session");
         this.router(); // Clean return to login
+    },
+
+    showNotification(message, type = "info") {
+        const wrapper = document.getElementById("modal-wrapper") || document.body;
+        const bgColor = type === "error" ? "bg-error/10" : "bg-primary/10";
+        const textColor = type === "error" ? "text-error" : "text-primary";
+        const buttonBg = type === "error" ? "bg-error" : "bg-primary";
+
+        const modal = document.createElement("div");
+        modal.className = "fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-md";
+        modal.innerHTML = `
+            <div class="bg-surface-container-lowest border border-outline-variant p-xl rounded-xl w-full max-w-[440px] space-y-md">
+                <div class="${bgColor} p-md rounded-lg flex items-center gap-md">
+                    <span class="material-symbols-outlined ${textColor}">${type === "error" ? "error" : "check_circle"}</span>
+                    <p class="font-body-md text-body-md ${textColor}">${message}</p>
+                </div>
+                <button id="notify-close" class="w-full ${buttonBg} text-on-primary p-2 rounded font-label-md">Accept</button>
+            </div>
+        `;
+        wrapper.appendChild(modal);
+        document.getElementById("notify-close").addEventListener("click", () => modal.remove());
+    },
+
+    showConfirm(message, onConfirm) {
+        const wrapper = document.getElementById("modal-wrapper") || document.body;
+        const modal = document.createElement("div");
+        modal.className = "fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-md";
+        modal.innerHTML = `
+            <div class="bg-surface-container-lowest border border-outline-variant p-xl rounded-xl w-full max-w-[440px] space-y-md">
+                <p class="font-body-md text-body-md text-on-surface">${message}</p>
+                <div class="flex gap-2">
+                    <button id="confirm-cancel" class="w-1/2 border border-outline-variant p-2 rounded font-label-md">Cancel</button>
+                    <button id="confirm-ok" class="w-1/2 bg-primary text-on-primary p-2 rounded font-label-md">Confirm</button>
+                </div>
+            </div>
+        `;
+        wrapper.appendChild(modal);
+        document.getElementById("confirm-cancel").addEventListener("click", () => modal.remove());
+        document.getElementById("confirm-ok").addEventListener("click", () => {
+            modal.remove();
+            onConfirm();
+        });
     }
 };
 

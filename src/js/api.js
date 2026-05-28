@@ -52,6 +52,15 @@ export const ApiService = {
         return response.ok;
     },
 
+    async updateUser(id, userData) {
+        const response = await fetch(`${BASE_URL}/users/${id}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(userData)
+        });
+        return response.ok;
+    },
+
     async deleteUser(id) {
         const response = await fetch(`${BASE_URL}/users/${id}`, {
             method: "DELETE",
