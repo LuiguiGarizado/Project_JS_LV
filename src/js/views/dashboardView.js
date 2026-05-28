@@ -13,11 +13,11 @@ export const DashboardView = {
             <p class="font-body-sm text-body-sm text-on-surface-variant">Product Team</p>
           </div>
           <nav class="flex-1 space-y-1">
-            <a class="flex items-center bg-primary-fixed text-on-primary-fixed-variant rounded-lg mx-2 px-4 py-3 font-body-sm text-body-sm transition-all scale-[0.98]" href="#"><span class="material-symbols-outlined mr-3" data-icon="dashboard">dashboard</span><span>Dashboard</span></a>
-            <a class="flex items-center text-secondary hover:text-primary hover:bg-primary-container/10 px-4 py-3 mx-2 font-body-sm text-body-sm rounded-lg transition-all" href="#"><span class="material-symbols-outlined mr-3" data-icon="assignment">assignment</span><span>Projects</span></a>
-            <a class="flex items-center text-secondary hover:text-primary hover:bg-primary-container/10 px-4 py-3 mx-2 font-body-sm text-body-sm rounded-lg transition-all" href="#"><span class="material-symbols-outlined mr-3" data-icon="group">group</span><span>Team</span></a>
-            <a class="flex items-center text-secondary hover:text-primary hover:bg-primary-container/10 px-4 py-3 mx-2 font-body-sm text-body-sm rounded-lg transition-all" href="#"><span class="material-symbols-outlined mr-3" data-icon="bar_chart">bar_chart</span><span>Reports</span></a>
-            <a class="flex items-center text-secondary hover:text-primary hover:bg-primary-container/10 px-4 py-3 mx-2 font-body-sm text-body-sm rounded-lg transition-all" href="#"><span class="material-symbols-outlined mr-3" data-icon="settings">settings</span><span>Settings</span></a>
+            <a id="nav-dashboard" class="flex items-center bg-primary-fixed text-on-primary-fixed-variant rounded-lg mx-2 px-4 py-3 font-body-sm text-body-sm transition-all scale-[0.98]" href="#"><span class="material-symbols-outlined mr-3" data-icon="dashboard">dashboard</span><span>Dashboard</span></a>
+            <a id="nav-projects" class="flex items-center text-secondary hover:text-primary hover:bg-primary-container/10 px-4 py-3 mx-2 font-body-sm text-body-sm rounded-lg transition-all" href="#"><span class="material-symbols-outlined mr-3" data-icon="assignment">assignment</span><span>Projects</span></a>
+            <a id="nav-team" class="flex items-center text-secondary hover:text-primary hover:bg-primary-container/10 px-4 py-3 mx-2 font-body-sm text-body-sm rounded-lg transition-all" href="#"><span class="material-symbols-outlined mr-3" data-icon="group">group</span><span>Team</span></a>
+            <a id="nav-reports" class="flex items-center text-secondary hover:text-primary hover:bg-primary-container/10 px-4 py-3 mx-2 font-body-sm text-body-sm rounded-lg transition-all" href="#"><span class="material-symbols-outlined mr-3" data-icon="bar_chart">bar_chart</span><span>Reports</span></a>
+            <a id="nav-settings" class="flex items-center text-secondary hover:text-primary hover:bg-primary-container/10 px-4 py-3 mx-2 font-body-sm text-body-sm rounded-lg transition-all" href="#"><span class="material-symbols-outlined mr-3" data-icon="settings">settings</span><span>Settings</span></a>
           </nav>
           <div class="px-4 mt-auto">
             <button id="btn-create-task" class="w-full bg-primary text-on-primary py-3 rounded-xl font-label-md text-label-md flex items-center justify-center gap-2 shadow-sm hover:opacity-90 transition-opacity">
@@ -41,7 +41,7 @@ export const DashboardView = {
             </div>
           </header>
 
-          <div class="flex-1 overflow-x-auto p-gutter custom-scrollbar h-[calc(100vh-64px)]">
+          <div id="dashboard-section" class="flex-1 overflow-x-auto p-gutter custom-scrollbar h-[calc(100vh-64px)]">
             <div class="flex gap-gutter h-full">
               <div class="kanban-column flex flex-col w-1/4 h-full">
                 <div class="flex items-center justify-between mb-md">
@@ -84,6 +84,17 @@ export const DashboardView = {
               </div>
             </div>
           </div>
+          <div id="team-section" class="hidden flex-1 overflow-y-auto p-gutter custom-scrollbar h-[calc(100vh-64px)]">
+            <div class="space-y-md">
+              <div class="flex items-center justify-between mb-md">
+                <div>
+                  <h2 class="font-title-sm text-title-sm text-on-surface">Team</h2>
+                  <p class="text-body-sm text-on-surface-variant">Personas registradas en la plataforma</p>
+                </div>
+              </div>
+              <div id="team-users" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-gutter"></div>
+            </div>
+          </div>
         </main>
         <div id="modal-wrapper"></div>
         `;
@@ -101,7 +112,21 @@ export const DashboardView = {
             createBtn.addEventListener("click", () => this.openCreateModal());
         }
 
+        const dashboardLink = document.getElementById("nav-dashboard");
+        const teamLink = document.getElementById("nav-team");
+
+        dashboardLink?.addEventListener("click", (e) => {
+            e.preventDefault();
+            this.showDashboard();
+        });
+
+        teamLink?.addEventListener("click", (e) => {
+            e.preventDefault();
+            this.showTeam();
+        });
+
         await this.loadBoardData();
+        this.showDashboard();
     },
 
     async loadBoardData() {
@@ -154,7 +179,53 @@ export const DashboardView = {
             badges[3].textContent = counts["done"];
         }
 
+        this.renderTeamSection(users);
         this.initDragAndDrop();
+    },
+
+    renderTeamSection(users) {
+        const teamList = document.getElementById("team-users");
+        if (!teamList) return;
+
+        teamList.innerHTML = users.map(user => `
+            <article class="bg-surface border border-outline-variant rounded-xl p-md shadow-sm">
+              <div class="flex items-center gap-4">
+                <div class="w-12 h-12 rounded-full bg-primary/10 text-primary font-bold flex items-center justify-center">${user.name.charAt(0).toUpperCase()}</div>
+                <div>
+                  <p class="font-label-md text-label-md text-on-surface font-semibold">${user.name}</p>
+                  <p class="text-[13px] text-on-surface-variant">${user.email}</p>
+                </div>
+              </div>
+              <div class="mt-4 flex items-center justify-between">
+                <span class="rounded-full px-3 py-1 bg-surface-container-high text-on-surface-variant text-[12px] uppercase">${user.role}</span>
+                <span class="text-[12px] text-on-surface-variant">ID ${user.id}</span>
+              </div>
+            </article>
+        `).join("");
+    },
+
+    showDashboard() {
+        document.getElementById("dashboard-section").classList.remove("hidden");
+        document.getElementById("team-section").classList.add("hidden");
+        this.setActiveNav("nav-dashboard");
+    },
+
+    showTeam() {
+        document.getElementById("dashboard-section").classList.add("hidden");
+        document.getElementById("team-section").classList.remove("hidden");
+        this.setActiveNav("nav-team");
+    },
+
+    setActiveNav(activeId) {
+        document.querySelectorAll("aside nav a").forEach(link => {
+            if (link.id === activeId) {
+                link.classList.add("bg-primary-fixed", "text-on-primary-fixed-variant", "scale-[0.98]");
+                link.classList.remove("text-secondary");
+            } else {
+                link.classList.remove("bg-primary-fixed", "text-on-primary-fixed-variant", "scale-[0.98]");
+                link.classList.add("text-secondary");
+            }
+        });
     },
 
     initDragAndDrop() {
