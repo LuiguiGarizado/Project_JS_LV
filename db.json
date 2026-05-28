@@ -1,0 +1,42 @@
+{
+  "users": [
+    {
+      "id": "1",
+      "name": "Administrador General",
+      "email": "admin@company.com",
+      "password": "admin123",
+      "role": "admin"
+    },
+    {
+      "id": "2",
+      "name": "Luigui Coder",
+      "email": "coder@company.com",
+      "password": "coder123",
+      "role": "coder"
+    }
+  ],
+  "tasks": [
+    {
+      "title": "hugyu",
+      "description": "jkhgyctfui",
+      "status": "in review",
+      "userId": "1",
+      "id": "yccu71YHK3E"
+    },
+    {
+      "title": "jkjhbygnm,.lñ",
+      "description": "sAzdgfvnhjkm,l",
+      "status": "in review",
+      "userId": "1",
+      "id": "n6ch2A4hikc"
+    },
+    {
+      "title": "aaaaaaaaaaaaa",
+      "description": "dsjiusdoiksñld",
+      "status": "done",
+      "userId": "2",
+      "id": "6eQovdccISA"
+    }
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
+}
