@@ -62,7 +62,7 @@ A modern, single-page application (SPA) for managing tasks using a Kanban board 
 ├── README.md                  # This file
 └── src/
     ├── js/
-    │   ├── app.js            # Main SPA router & notification system
+    │   ├── app.js            # Main SPA ( Single page Application) router & notification system
     │   ├── api.js            # API service for backend calls
     │   └── views/
     │       ├── loginView.js   # Login page component

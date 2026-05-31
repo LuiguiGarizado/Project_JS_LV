@@ -461,10 +461,12 @@ export const DashboardView = {
           <div class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-md">
             <div class="bg-surface-container-lowest border border-outline-variant p-xl rounded-xl w-full max-w-[440px] space-y-md">
               <h3 class="text-title-sm font-bold text-primary">Add Team Member</h3>
-              <form id="create-user-form" class="space-y-md">
-                <input type="text" id="u-name" class="w-full border p-2 rounded" placeholder="Name" required />
-                <input type="email" id="u-email" class="w-full border p-2 rounded" placeholder="Email" required />
-                <input type="password" id="u-password" class="w-full border p-2 rounded" placeholder="Password" required />
+              <form id="create-user-form" class="space-y-md" autocomplete="off">
+                <input type="text" name="fake-username" autocomplete="username" style="position:absolute;left:-9999px;top:-9999px;" aria-hidden="true" />
+                <input type="password" name="fake-password" autocomplete="new-password" style="position:absolute;left:-9999px;top:-9999px;" aria-hidden="true" />
+                <input type="text" id="u-name" class="w-full border p-2 rounded" autocomplete="off" placeholder="Name" required />
+                <input type="email" id="u-email" class="w-full border p-2 rounded" autocomplete="off" placeholder="Email" required />
+                <input type="password" id="u-password" class="w-full border p-2 rounded" autocomplete="new-password" placeholder="Password" required />
                 <select id="u-role" class="w-full border p-2 rounded" required>
                   <option value="coder">Coder</option>
                   <option value="admin">Admin</option>
@@ -507,18 +509,20 @@ export const DashboardView = {
           <div class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-md">
             <div class="bg-surface-container-lowest border border-outline-variant p-xl rounded-xl w-full max-w-[440px] space-y-md">
               <h3 class="text-title-sm font-bold text-primary">Edit Team Member</h3>
-              <form id="edit-user-form" class="space-y-md">
+              <form id="edit-user-form" class="space-y-md" autocomplete="off">
+                <input type="text" name="fake-username" autocomplete="username" style="position:absolute;left:-9999px;top:-9999px;" aria-hidden="true" />
+                <input type="password" name="fake-password" autocomplete="new-password" style="position:absolute;left:-9999px;top:-9999px;" aria-hidden="true" />
                 <div>
                   <label class="font-label-sm text-label-sm text-on-surface-variant block mb-xs">Name</label>
-                  <input type="text" id="eu-name" class="w-full border border-outline-variant p-2 rounded" value="${user.name}" required />
+                  <input type="text" id="eu-name" class="w-full border border-outline-variant p-2 rounded" autocomplete="off" value="${user.name}" required />
                 </div>
                 <div>
                   <label class="font-label-sm text-label-sm text-on-surface-variant block mb-xs">Email</label>
-                  <input type="email" id="eu-email" class="w-full border border-outline-variant p-2 rounded" value="${user.email}" required />
+                  <input type="email" id="eu-email" class="w-full border border-outline-variant p-2 rounded" autocomplete="off" value="${user.email}" required />
                 </div>
                 <div>
                   <label class="font-label-sm text-label-sm text-on-surface-variant block mb-xs">Password (leave empty to keep unchanged)</label>
-                  <input type="password" id="eu-password" class="w-full border border-outline-variant p-2 rounded" placeholder="New password" />
+                  <input type="password" id="eu-password" class="w-full border border-outline-variant p-2 rounded" autocomplete="new-password" placeholder="New password" />
                 </div>
                 <div>
                   <label class="font-label-sm text-label-sm text-on-surface-variant block mb-xs">Role</label>

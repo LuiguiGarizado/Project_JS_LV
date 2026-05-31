@@ -23,13 +23,13 @@
     },
     {
       "name": "Sayder",
-      "email": "sacoder@company.com",
+      "email": "sayder@company.com",
       "password": "sayder123",
       "role": "coder",
       "id": "JPsdiF7xh-Y"
     },
     {
-      "name": "gabriela",
+      "name": "Gabriela Suarez",
       "email": "gabrielacoder@company.com",
       "password": "gaby1234",
       "role": "coder",
@@ -40,7 +40,7 @@
     {
       "title": "Building fronted ",
       "description": "Search bar button is not working properly, user says that when click on that the main page goes glitched.",
-      "status": "todo",
+      "status": "in review",
       "userId": "2",
       "id": "wl8ktgYEqQo"
     }
